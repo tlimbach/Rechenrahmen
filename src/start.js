@@ -2,8 +2,8 @@ class Start {
 
 	constructor() {
 
-		const windowWidth = window.innerWidth;
-		const windowHeight = window.innerHeight;
+		const windowWidth = window.innerWidth-100;
+		const windowHeight = window.innerHeight-100;
 		
 		const circleSize = 40;
 		const hGap = 3;

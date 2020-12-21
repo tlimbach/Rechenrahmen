@@ -12,6 +12,12 @@ class CircleRow {
 			mX = e.pageX;
 		});
 
+		$('body').bind('touchmove', e => {
+			const screenX = e.originalEvent.changedTouches[0].screenX;
+			this.isMoveRight = screenX > mX;
+			mX = screenX;
+		});
+
 		this.circles = [];
 
 		for (let i = 0; i < 10; i++) {
@@ -29,7 +35,12 @@ class CircleRow {
 
 			circle.itemNr = i;
 			circle.draggable().on('dragmove', e => {
-				e.preventDefault();
+
+				console.log("move!!" + this.isMoveRight);
+
+				if (e.cancelable) {
+					e.preventDefault();
+				}
 
 				const { handler, box } = e.detail;
 				const xMax = rowXPos + usedWidth - circleSize - hGap;
@@ -41,16 +52,13 @@ class CircleRow {
 						newX = xMax;
 					}
 					this.moveRight(circle, newX);
-					
-					
 
 				} else {
-					
+
 					let newX = box.x;
 					if (newX < this.leftBorderPosition) {
 						newX = this.leftBorderPosition;
 					}
-					
 					this.moveLeft(circle, newX);
 				}
 
@@ -60,11 +68,11 @@ class CircleRow {
 	}
 
 	moveRight(circle, xPos) {
-
-		//		const jump = Math.abs(circle.x() - xPos);
-		//		if (jump>this.circleSize/2) {
-		//			xPos=circle.x()+this.circleSize/2;
-		//		}
+//		console.log("mr");
+//		const jump = Math.abs(circle.x() - xPos);
+//		if (jump > this.circleSize / 2) {
+//			xPos = circle.x() + this.circleSize / 2;
+//		}
 
 		if (this.canMoveRight(circle)) {
 			circle.x(xPos);
@@ -87,20 +95,24 @@ class CircleRow {
 	}
 
 	canMoveRight(circle) {
+//		console.log("cmr");
 		if (circle.itemNr === this.circles.length - 1) {
 			return circle.x() < this.rightBorderPosition;
 		}
 
 		const dist = Math.abs(circle.x() - this.circles[circle.itemNr + 1].x());
+
+		console.log("dist" + dist);
+
 		return dist > this.circleSize;
 	}
 
 	moveLeft(circle, xPos) {
 
-		//		const jump = Math.abs(circle.x() - xPos);
-		//		if (jump>this.circleSize/2) {
-		//			xPos=circle.x()-this.circleSize/2;
-		//		}
+//		const jump = Math.abs(circle.x() - xPos);
+//		if (jump > this.circleSize / 2) {
+//			xPos = circle.x() - this.circleSize / 2;
+//		}
 
 		if (this.canMoveLeft(circle)) {
 			circle.x(xPos);
@@ -121,7 +133,6 @@ class CircleRow {
 		}
 
 	}
-
 
 	canMoveLeft(circle) {
 		if (circle.itemNr === 0) {
