@@ -1,11 +1,11 @@
 class CircleRow {
 
-	constructor(paper, cSize, lbp, rbp, yPos) {
-		
-		this.rightBorderPosition = rbp;
-		this.leftBorderPosition = lbp;
-		this.circleSize = cSize;
-		
+	constructor(paper, rowXPos, rowYPos, circleSize, hGap, vGap, usedWidth, usedHeight) {
+
+		this.rightBorderPosition = rowXPos + usedWidth - (circleSize + hGap);
+		this.leftBorderPosition = rowXPos;
+		this.circleSize = circleSize;
+
 		let mX = 0;
 		$('body').mousemove(e => {
 			this.isMoveRight = e.pageX > mX;
@@ -16,7 +16,7 @@ class CircleRow {
 
 		for (let i = 0; i < 10; i++) {
 
-			let xInit = this.circleSize * i;
+			let xInit = this.leftBorderPosition + (this.circleSize + hGap) * i;
 			let color = 'red';
 
 			if (i > 4) {
@@ -24,22 +24,36 @@ class CircleRow {
 				color = 'blue';
 			}
 
-			const circle = paper.circle(this.circleSize).x(xInit).y(yPos).fill(color);
+			const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color);
 			this.circles.push(circle);
 
 			circle.itemNr = i;
 			circle.draggable().on('dragmove', e => {
-				
-				console.log("drag");
-
-				const { handler, box } = e.detail;
 				e.preventDefault();
 
+				const { handler, box } = e.detail;
+				const xMax = rowXPos + usedWidth - circleSize - hGap;
+
 				if (this.isMoveRight) {
-					this.moveRight(circle, box.x);
+
+					let newX = box.x;
+					if (newX > xMax) {
+						newX = xMax;
+					}
+					this.moveRight(circle, newX);
+					
+					
+
 				} else {
-					this.moveLeft(circle, box.x);
+					
+					let newX = box.x;
+					if (newX < this.leftBorderPosition) {
+						newX = this.leftBorderPosition;
+					}
+					
+					this.moveLeft(circle, newX);
 				}
+
 			});
 		}
 
@@ -47,11 +61,10 @@ class CircleRow {
 
 	moveRight(circle, xPos) {
 
-		console.log("move right");
-		const jump = Math.abs(circle.x() - xPos);
-		if (jump>this.circleSize/2) {
-			xPos=circle.x()+this.circleSize/2;
-		}
+		//		const jump = Math.abs(circle.x() - xPos);
+		//		if (jump>this.circleSize/2) {
+		//			xPos=circle.x()+this.circleSize/2;
+		//		}
 
 		if (this.canMoveRight(circle)) {
 			circle.x(xPos);
@@ -75,7 +88,6 @@ class CircleRow {
 
 	canMoveRight(circle) {
 		if (circle.itemNr === this.circles.length - 1) {
-			console.log(circle.x());
 			return circle.x() < this.rightBorderPosition;
 		}
 
@@ -84,12 +96,12 @@ class CircleRow {
 	}
 
 	moveLeft(circle, xPos) {
-		
-		const jump = Math.abs(circle.x() - xPos);
-		if (jump>this.circleSize/2) {
-			xPos=circle.x()-this.circleSize/2;
-		}
-		
+
+		//		const jump = Math.abs(circle.x() - xPos);
+		//		if (jump>this.circleSize/2) {
+		//			xPos=circle.x()-this.circleSize/2;
+		//		}
+
 		if (this.canMoveLeft(circle)) {
 			circle.x(xPos);
 			return true;
