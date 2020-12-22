@@ -5,7 +5,7 @@ class Start {
 		const windowWidth = window.innerWidth-20;
 		const windowHeight = window.innerHeight-20;
 		
-		const circleSize = windowHeight / 18;
+		const circleSize = windowHeight / 16;
 		const hGap = circleSize/5;
 		const vGap = circleSize/2;
 		
