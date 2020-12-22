@@ -5,7 +5,7 @@ class Start {
 		const windowWidth = window.innerWidth;
 		const windowHeight = window.innerHeight;
 		
-		const circleSize = windowHeight / 20;
+		const circleSize = windowHeight / 18;
 		const hGap = circleSize/5;
 		const vGap = circleSize/2;
 		
@@ -34,7 +34,7 @@ class Start {
 		this.paper.rect(windowWidth, windowHeight).fill(colors["outer"]);
 		
 		
-		const innerRect = this.paper.rect(usedWidth, usedHeight).move(rowXPos, rowYPos).radius(10).fill(colors["inner"]);
+		const innerRect = this.paper.rect(usedWidth, usedHeight).move(rowXPos, rowYPos).radius(circleSize/2).fill(colors["inner"]);
 //		this.paper.rect(usedWidth, usedHeight).move(rowXPos, rowYPos).radius(10).fill(colors["inner"]);
 		
 		$('html').css('background-color', colors["outer"]);
