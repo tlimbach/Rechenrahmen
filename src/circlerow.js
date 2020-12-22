@@ -1,10 +1,12 @@
 class CircleRow {
 
-	constructor(paper, rowXPos, rowYPos, circleSize, hGap, vGap, usedWidth, usedHeight) {
+	constructor(paper, rowXPos, rowYPos, circleSize, hGap, vGap, usedWidth, usedHeight, colors) {
 
 		this.rightBorderPosition = rowXPos + usedWidth - (circleSize + hGap);
 		this.leftBorderPosition = rowXPos;
 		this.circleSize = circleSize;
+		this.hGap = hGap;
+		this.usedWidth = usedWidth;
 
 		let mX = 0;
 		$('body').mousemove(e => {
@@ -19,27 +21,33 @@ class CircleRow {
 		});
 
 		this.circles = [];
+		
 
 		for (let i = 0; i < 10; i++) {
 
 			let xInit = this.leftBorderPosition + (this.circleSize + hGap) * i;
-			let color = 'red';
+			let color =  colors["circleColor1"];
 
 			if (i > 4) {
 				xInit += this.circleSize;
-				color = 'blue';
+				color = colors["circleColor2"];
 			}
 
-			const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color);
+			const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color).attr("stroke", "none");
+;
 			this.circles.push(circle);
 
 			circle.itemNr = i;
 			circle.draggable().on('dragmove', e => {
 
-				console.log("move!!" + this.isMoveRight);
-
 				if (e.cancelable) {
 					e.preventDefault();
+				}
+				
+				const distance = Math.abs(e.detail.box.x - circle.x());
+				if (distance > this.circleSize) {
+					console.log("too fast!");
+					return;
 				}
 
 				const { handler, box } = e.detail;
@@ -68,11 +76,6 @@ class CircleRow {
 	}
 
 	moveRight(circle, xPos) {
-//		console.log("mr");
-//		const jump = Math.abs(circle.x() - xPos);
-//		if (jump > this.circleSize / 2) {
-//			xPos = circle.x() + this.circleSize / 2;
-//		}
 
 		if (this.canMoveRight(circle)) {
 			circle.x(xPos);
@@ -95,24 +98,15 @@ class CircleRow {
 	}
 
 	canMoveRight(circle) {
-//		console.log("cmr");
 		if (circle.itemNr === this.circles.length - 1) {
 			return circle.x() < this.rightBorderPosition;
 		}
 
 		const dist = Math.abs(circle.x() - this.circles[circle.itemNr + 1].x());
-
-		console.log("dist" + dist);
-
-		return dist > this.circleSize;
+		return dist > this.circleSize + this.hGap;
 	}
 
 	moveLeft(circle, xPos) {
-
-//		const jump = Math.abs(circle.x() - xPos);
-//		if (jump > this.circleSize / 2) {
-//			xPos = circle.x() - this.circleSize / 2;
-//		}
 
 		if (this.canMoveLeft(circle)) {
 			circle.x(xPos);
@@ -140,6 +134,6 @@ class CircleRow {
 		}
 
 		const dist = Math.abs(circle.x() - this.circles[circle.itemNr - 1].x());
-		return dist > this.circleSize;
+		return dist > this.circleSize + this.hGap;
 	}
 }
