@@ -31,7 +31,6 @@ class Start {
 //		};
 
 		this.paper = SVG().addTo('#canvasdiv').size(windowWidth, windowHeight);
-		this.paper.rect(windowWidth, windowHeight).fill(colors["outer"]);
 		
 		
 		const innerRect = this.paper.rect(usedWidth, usedHeight).move(rowXPos, rowYPos).radius(circleSize/2).fill(colors["inner"]);

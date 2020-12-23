@@ -34,6 +34,39 @@ class CircleRow {
 			}
 
 			const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color).attr("stroke", "none");
+
+			const gradient = paper.gradient('radial', function(add) {
+
+				add.stop(0, '#cf6366');
+				add.stop(1, '#98484a');
+
+// heller
+				add.stop(0, '#cf777a');
+				add.stop(1, '#985859');
+
+			});
+			circle.fill(gradient);
+
+			if (i > 4) {
+				const gradient = paper.gradient('radial', function(add) {
+					add.stop(0, '#706dca');
+					add.stop(1, '#37348a');
+
+
+// heller
+					add.stop(0, '#827fca');
+					add.stop(1, '#46438a');
+
+				});
+				circle.fill(gradient);
+			}
+
+			
+//			circle.attr('boxShadow', '10px 20px 30px blue');
+			circle.attr('filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
+			
+			
+
 			this.circles.push(circle);
 
 			circle.itemNr = i;
@@ -73,7 +106,7 @@ class CircleRow {
 
 	//* Gradient in Circle einbauen
 	moveRight(circle, step) {
-		
+
 		if (step < 0) {
 			return;
 		}
