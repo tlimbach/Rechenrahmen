@@ -21,12 +21,12 @@ class CircleRow {
 		});
 
 		this.circles = [];
-		
+
 
 		for (let i = 0; i < 10; i++) {
 
 			let xInit = this.leftBorderPosition + (this.circleSize + hGap) * i;
-			let color =  colors["circleColor1"];
+			let color = colors["circleColor1"];
 
 			if (i > 4) {
 				xInit += this.circleSize;
@@ -34,7 +34,6 @@ class CircleRow {
 			}
 
 			const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color).attr("stroke", "none");
-;
 			this.circles.push(circle);
 
 			circle.itemNr = i;
@@ -43,97 +42,95 @@ class CircleRow {
 				if (e.cancelable) {
 					e.preventDefault();
 				}
-				
-				const distance = Math.abs(e.detail.box.x - circle.x());
-				if (distance > this.circleSize) {
-					console.log("too fast!");
-					return;
-				}
+
+				this.ongoingDrag = true;
 
 				const { handler, box } = e.detail;
-				const xMax = rowXPos + usedWidth - circleSize - hGap;
 
 				if (this.isMoveRight) {
 
-					let newX = box.x;
-					if (newX > xMax) {
-						newX = xMax;
-					}
-					this.moveRight(circle, newX);
+					this.moveRight(circle, Math.round(box.x - circle.x()));
 
 				} else {
-
-					let newX = box.x;
-					if (newX < this.leftBorderPosition) {
-						newX = this.leftBorderPosition;
+					const step = Math.round(circle.x() - box.x);
+					if (step > 0) {
+						this.moveLeft(circle, step);
 					}
-					this.moveLeft(circle, newX);
 				}
 
+			}).on('dragend', e => {
+				if (e.cancelable) {
+					e.preventDefault();
+				}
 			});
 		}
 
 	}
 
-	moveRight(circle, xPos) {
-
-		if (this.canMoveRight(circle)) {
-			circle.x(xPos);
-			return true;
-		} else {
-
-			if (circle.itemNr === this.circles.length - 1) {
-				return false;
-			}
-
-			const nextRightCircle = this.circles[circle.itemNr + 1];
-			if (this.moveRight(nextRightCircle, nextRightCircle.x() + 1)) {
-				this.moveRight(circle, xPos);
-				return true;
-			} else {
-				return false;
-			}
-		}
-
+	setCircleToXPos(circle, xPos) {
+		circle.x(xPos);
 	}
 
-	canMoveRight(circle) {
+	//* Gradient in Circle einbauen
+	moveRight(circle, step) {
+		
+		if (step < 0) {
+			return;
+		}
+
+		const distNextObject = this.distNextRightObject(circle);
+
+		if (distNextObject < step) {
+
+			if (circle.itemNr < this.circles.length - 1) {
+				const nextRightCirlce = this.circles[circle.itemNr + 1];
+				const remaining = step - distNextObject;
+
+				this.moveRight(nextRightCirlce, remaining);
+				this.setCircleToXPos(circle, circle.x() + this.distNextRightObject(circle));
+			} else {
+				// right border
+				this.setCircleToXPos(circle, this.rightBorderPosition - this.hGap);
+			}
+		} else {
+			this.setCircleToXPos(circle, circle.x() + step);
+		}
+	}
+
+	distNextRightObject(circle) {
 		if (circle.itemNr === this.circles.length - 1) {
-			return circle.x() < this.rightBorderPosition;
+			return Math.round(this.rightBorderPosition - circle.x());
 		}
 
-		const dist = Math.abs(circle.x() - this.circles[circle.itemNr + 1].x());
-		return dist > this.circleSize + this.hGap;
+		return Math.round(this.circles[circle.itemNr + 1].x() - circle.x() - (this.circleSize + this.hGap));
 	}
 
-	moveLeft(circle, xPos) {
+	moveLeft(circle, step) {
 
-		if (this.canMoveLeft(circle)) {
-			circle.x(xPos);
-			return true;
-		} else {
+		const distNextObject = this.distNextLeftObject(circle);
 
-			if (circle.itemNr === 0) {
-				return false;
-			}
+		if (distNextObject < step) {
 
-			const nextLeftCircle = this.circles[circle.itemNr - 1];
-			if (this.moveLeft(nextLeftCircle, nextLeftCircle.x() - 1)) {
-				this.moveLeft(circle, xPos);
-				return true;
+			if (circle.itemNr > 0) {
+				const nextLeftCirlce = this.circles[circle.itemNr - 1];
+				const remaining = step - distNextObject;
+
+				this.moveLeft(nextLeftCirlce, remaining);
+				this.setCircleToXPos(circle, circle.x() - this.distNextLeftObject(circle));
 			} else {
-				return false;
+				// left border
+				this.setCircleToXPos(circle, this.leftBorderPosition);
 			}
+		} else {
+			this.setCircleToXPos(circle, circle.x() - step);
 		}
-
 	}
 
-	canMoveLeft(circle) {
+	distNextLeftObject(circle) {
 		if (circle.itemNr === 0) {
-			return circle.x() > this.leftBorderPosition;
+			return Math.round(circle.x() - this.leftBorderPosition);
 		}
 
-		const dist = Math.abs(circle.x() - this.circles[circle.itemNr - 1].x());
-		return dist > this.circleSize + this.hGap;
+		return Math.round(circle.x() - (this.circleSize + this.hGap) - this.circles[circle.itemNr - 1].x());
 	}
 }
