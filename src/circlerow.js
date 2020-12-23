@@ -63,7 +63,7 @@ class CircleRow {
 
 			
 //			circle.attr('boxShadow', '10px 20px 30px blue');
-			circle.attr('filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
+//			circle.attr('filter', 'drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))');
 			
 			
 
