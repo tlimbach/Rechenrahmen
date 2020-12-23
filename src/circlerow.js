@@ -41,24 +41,24 @@ class CircleRow {
 				add.stop(1, '#98484a');
 
 // heller
-				add.stop(0, '#cf777a');
-				add.stop(1, '#985859');
+//				add.stop(0, '#cf777a');
+//				add.stop(1, '#985859');
 
 			});
 			circle.fill(gradient);
 
 			if (i > 4) {
-				const gradient = paper.gradient('radial', function(add) {
+				const g2 = paper.gradient('radial', function(add) {
 					add.stop(0, '#706dca');
 					add.stop(1, '#37348a');
 
 
 // heller
-					add.stop(0, '#827fca');
-					add.stop(1, '#46438a');
+//					add.stop(0, '#827fca');
+//					add.stop(1, '#46438a');
 
 				});
-				circle.fill(gradient);
+				circle.fill(g2);
 			}
 
 			
