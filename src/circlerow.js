@@ -29,7 +29,7 @@ class CircleRow {
 			let color = colors["circleColor1"];
 
 			if (i > 4) {
-				xInit += this.circleSize;
+				xInit += this.circleSize/2;
 				color = colors["circleColor2"];
 			}
 
