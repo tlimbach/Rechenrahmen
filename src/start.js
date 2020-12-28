@@ -9,7 +9,7 @@ class Start {
 		const hGap = circleSize/20;
 		const vGap = circleSize/2;
 		
-		const usedWidth = 12*(circleSize+hGap)*2;
+		const usedWidth = 11*(circleSize+hGap)*2;
 		const usedHeight = 10*(circleSize+vGap);
 		
 		const rowXPos = (windowWidth/2)-(usedWidth/2);
