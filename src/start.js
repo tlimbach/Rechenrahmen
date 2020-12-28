@@ -6,10 +6,10 @@ class Start {
 		const windowHeight = window.innerHeight-20;
 		
 		const circleSize = windowHeight / 16;
-		const hGap = circleSize/5;
+		const hGap = circleSize/20;
 		const vGap = circleSize/2;
 		
-		const usedWidth = 10*(circleSize+hGap)*2;
+		const usedWidth = 12*(circleSize+hGap)*2;
 		const usedHeight = 10*(circleSize+vGap);
 		
 		const rowXPos = (windowWidth/2)-(usedWidth/2);
