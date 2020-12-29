@@ -25,7 +25,10 @@ class CircleRow {
 
 		for (let i = 0; i < 10; i++) {
 
-			let xInit = this.leftBorderPosition + (this.circleSize + hGap) * i;
+			const offset = this.circleSize/4;
+	
+			let xInit = (this.leftBorderPosition + (this.circleSize + hGap) * i)+ offset;
+			
 			let color = colors["circleColor1"];
 
 			if (i > 4) {
