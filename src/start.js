@@ -1,3 +1,17 @@
+let startInstance;
+
+function initialize() {
+    // Lösche vorherige Instanz (falls vorhanden)
+    if (startInstance) {
+        $('#canvasdiv').empty(); // Entfernt die vorhandenen SVG-Inhalte
+    }
+    // Neue Instanz erstellen
+    startInstance = new Start();
+}
+
+window.onload = initialize;
+window.onresize = initialize;
+
 class Start {
 
 	constructor() {
