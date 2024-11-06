@@ -13,7 +13,7 @@ function initialize() {
         }
         // Neue Instanz erstellen
         startInstance = new Start();
-    }, 100); // 100 ms Verzögerung
+    }, 2000); // 100 ms Verzögerung
 }
 
 window.onload = initialize;
