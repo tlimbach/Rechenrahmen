@@ -15,7 +15,8 @@ function initialize() {
         }
 
         // Lösche vorherige Instanz (falls vorhanden)
-        if (startInstance) {
+        //if (startInstance) 
+		{
             $('#canvasdiv').empty(); // Entfernt die vorhandenen SVG-Inhalte
         }
         // Neue Instanz erstellen
