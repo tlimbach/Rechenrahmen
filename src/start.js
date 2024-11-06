@@ -1,12 +1,19 @@
 let startInstance;
+let resizeTimeout;
 
 function initialize() {
-    // Lösche vorherige Instanz (falls vorhanden)
-    if (startInstance) {
-        $('#canvasdiv').empty(); // Entfernt die vorhandenen SVG-Inhalte
+    // Verzögerung einbauen, um sicherzustellen, dass die Größen korrekt sind
+    if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
     }
-    // Neue Instanz erstellen
-    startInstance = new Start();
+    resizeTimeout = setTimeout(() => {
+        // Lösche vorherige Instanz (falls vorhanden)
+        if (startInstance) {
+            $('#canvasdiv').empty(); // Entfernt die vorhandenen SVG-Inhalte
+        }
+        // Neue Instanz erstellen
+        startInstance = new Start();
+    }, 100); // 100 ms Verzögerung
 }
 
 window.onload = initialize;
