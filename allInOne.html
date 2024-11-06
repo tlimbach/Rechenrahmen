@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta name="apple-mobile-web-app-title" content="Lucy" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta content="UTF-8" http-equiv="encoding" />
+    <link rel="apple-touch-icon" href="icon.png">
+    <title>Lucy</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="src/svg.min.js"></script>
+    <script type="text/javascript" src="src/svg.draggable.js"></script>
+</head>
+<body onload="new Start();">
+<div id="canvasdiv"></div>
+
+<script type="text/javascript">
+    class Start {
+        constructor() {
+            const windowWidth = window.innerWidth - 20;
+            const windowHeight = window.innerHeight - 20;
+
+            const circleSize = windowHeight / 16;
+            const hGap = circleSize / 20;
+            const vGap = circleSize / 2;
+
+            const usedWidth = 11 * (circleSize + hGap) * 2;
+            const usedHeight = 10 * (circleSize + vGap);
+
+            const rowXPos = (windowWidth / 2) - (usedWidth / 2);
+            const rowYPos = (windowHeight / 2) - (usedHeight / 2);
+
+            const colors = {
+                inner: '#eeeeee',
+                outer: 'lightgray',
+                circleColor1: "#BE5A5D",
+                circleColor2: "#4E4C8A",
+                colorStange: "#87ab62"
+            };
+
+            this.paper = SVG().addTo('#canvasdiv').size(windowWidth, windowHeight);
+
+            const innerRect = this.paper.rect(usedWidth, usedHeight).move(rowXPos, rowYPos).radius(circleSize / 2).fill(colors["inner"]);
+
+            $('html').css('background-color', colors["outer"]);
+
+            for (let row = 0; row < 10; row++) {
+                this.paper.rect(usedWidth, 1).move(rowXPos, -1 + circleSize / 2 + rowYPos + (vGap / 2) + (row * (circleSize + vGap))).fill(colors["colorStange"]);
+                new CircleRow(this.paper, rowXPos + (hGap), rowYPos + (vGap / 2) + (row * (circleSize + vGap)), circleSize, hGap, vGap, usedWidth, usedHeight, colors);
+            }
+        }
+    }
+
+    class CircleRow {
+        constructor(paper, rowXPos, rowYPos, circleSize, hGap, vGap, usedWidth, usedHeight, colors) {
+            this.rightBorderPosition = rowXPos + usedWidth - (circleSize + hGap);
+            this.leftBorderPosition = rowXPos;
+            this.circleSize = circleSize;
+            this.hGap = hGap;
+            this.usedWidth = usedWidth;
+
+            let mX = 0;
+            $('body').mousemove(e => {
+                this.isMoveRight = e.pageX > mX;
+                mX = e.pageX;
+            });
+
+            $('body').bind('touchmove', e => {
+                const screenX = e.originalEvent.changedTouches[0].screenX;
+                this.isMoveRight = screenX > mX;
+                mX = screenX;
+            });
+
+            this.circles = [];
+
+            for (let i = 0; i < 10; i++) {
+                const offset = this.circleSize / 4;
+                let xInit = (this.leftBorderPosition + (this.circleSize + hGap) * i) + offset;
+                let color = colors["circleColor1"];
+
+                if (i > 4) {
+                    xInit += this.circleSize / 2;
+                    color = colors["circleColor2"];
+                }
+
+                const circle = paper.circle(this.circleSize).x(xInit).y(rowYPos).fill(color).attr("stroke", "none");
+                const gradient = paper.gradient('radial', function (add) {
+                    add.stop(0, '#cf6366');
+                    add.stop(1, '#98484a');
+                });
+                circle.fill(gradient);
+
+                if (i > 4) {
+                    const g2 = paper.gradient('radial', function (add) {
+                        add.stop(0, '#706dca');
+                        add.stop(1, '#37348a');
+                    });
+                    circle.fill(g2);
+                }
+
+                this.circles.push(circle);
+                circle.itemNr = i;
+                circle.draggable().on('dragmove', e => {
+                    if (e.cancelable) {
+                        e.preventDefault();
+                    }
+
+                    this.ongoingDrag = true;
+                    const { handler, box } = e.detail;
+
+                    if (this.isMoveRight) {
+                        this.moveRight(circle, Math.round(box.x - circle.x()));
+                    } else {
+                        const step = Math.round(circle.x() - box.x);
+                        if (step > 0) {
+                            this.moveLeft(circle, step);
+                        }
+                    }
+                }).on('dragend', e => {
+                    if (e.cancelable) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        }
+
+        setCircleToXPos(circle, xPos) {
+            circle.x(xPos);
+        }
+
+        moveRight(circle, step) {
+            if (step < 0) {
+                return;
+            }
+
+            const distNextObject = this.distNextRightObject(circle);
+
+            if (distNextObject < step) {
+                if (circle.itemNr < this.circles.length - 1) {
+                    const nextRightCircle = this.circles[circle.itemNr + 1];
+                    const remaining = step - distNextObject;
+
+                    this.moveRight(nextRightCircle, remaining);
+                    this.setCircleToXPos(circle, circle.x() + this.distNextRightObject(circle));
+                } else {
+                    this.setCircleToXPos(circle, this.rightBorderPosition - this.hGap);
+                }
+            } else {
+                this.setCircleToXPos(circle, circle.x() + step);
+            }
+        }
+
+        distNextRightObject(circle) {
+            if (circle.itemNr === this.circles.length - 1) {
+                return Math.round(this.rightBorderPosition - circle.x());
+            }
+            return Math.round(this.circles[circle.itemNr + 1].x() - circle.x() - (this.circleSize + this.hGap));
+        }
+
+        moveLeft(circle, step) {
+            const distNextObject = this.distNextLeftObject(circle);
+
+            if (distNextObject < step) {
+                if (circle.itemNr > 0) {
+                    const nextLeftCircle = this.circles[circle.itemNr - 1];
+                    const remaining = step - distNextObject;
+
+                    this.moveLeft(nextLeftCircle, remaining);
+                    this.setCircleToXPos(circle, circle.x() - this.distNextLeftObject(circle));
+                } else {
+                    this.setCircleToXPos(circle, this.leftBorderPosition);
+                }
+            } else {
+                this.setCircleToXPos(circle, circle.x() - step);
+            }
+        }
+
+        distNextLeftObject(circle) {
+            if (circle.itemNr === 0) {
+                return Math.round(circle.x() - this.leftBorderPosition);
+            }
+            return Math.round(circle.x() - (this.circleSize + this.hGap) - this.circles[circle.itemNr - 1].x());
+        }
+    }
+</script>
+</body>
+</html>
