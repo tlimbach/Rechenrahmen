@@ -7,13 +7,20 @@ function initialize() {
         clearTimeout(resizeTimeout);
     }
     resizeTimeout = setTimeout(() => {
+        // Prüfen, ob das Gerät im Hochformat ist
+        if (window.innerHeight > window.innerWidth) {
+            // Wenn Hochformat, zeige eine Meldung und beende die Initialisierung
+            $('#canvasdiv').html('<p style="text-align: center; font-size: 20px;">Bitte drehen Sie Ihr Gerät ins Querformat, um Lucy auszuführen.</p>');
+            return;
+        }
+
         // Lösche vorherige Instanz (falls vorhanden)
         if (startInstance) {
             $('#canvasdiv').empty(); // Entfernt die vorhandenen SVG-Inhalte
         }
         // Neue Instanz erstellen
         startInstance = new Start();
-    }, 200); // 100 ms Verzögerung
+    }, 200); // 200 ms Verzögerung
 }
 
 window.onload = initialize;
