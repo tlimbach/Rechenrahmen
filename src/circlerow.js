@@ -15,6 +15,7 @@ class CircleRow {
 		});
 
 		$('body').bind('touchmove', e => {
+			e.preventDefault();
 			const screenX = e.originalEvent.changedTouches[0].screenX;
 			this.isMoveRight = screenX > mX;
 			mX = screenX;
