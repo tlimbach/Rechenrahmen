@@ -32,7 +32,9 @@ class Start {
         const windowWidth = window.innerWidth - 20;
         const windowHeight = window.innerHeight - 20;
 
-        const circleSize = windowHeight / 16;
+
+
+        const circleSize = Math.min(windowHeight, windowWidth) / 16;
         const hGap = circleSize / 20;
         const vGap = circleSize / 2;
 
