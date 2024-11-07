@@ -10,8 +10,8 @@ function initialize() {
         // Prüfen, ob das Gerät im Hochformat ist
         if (window.innerHeight > window.innerWidth) {
             // Wenn Hochformat, zeige eine Meldung und beende die Initialisierung
-            $('#canvasdiv').html('<p style="text-align: center; font-size: 20px;">Bitte drehen Sie Ihr Gerät ins Querformat, um Lucy auszuführen.</p>');
-            return;
+           // $('#canvasdiv').html('<p style="text-align: center; font-size: 20px;">Bitte drehen Sie Ihr Gerät ins Querformat, um Lucy auszuführen.</p>');
+           // return;
         }
 
         // Lösche vorherige Instanz (falls vorhanden)
@@ -21,7 +21,7 @@ function initialize() {
         }
         // Neue Instanz erstellen
         startInstance = new Start();
-    }, 200); // 200 ms Verzögerung
+    }, 100); // 200 ms Verzögerung
 }
 
 window.onload = initialize;
@@ -36,8 +36,8 @@ class Start {
         const hGap = circleSize / 20;
         const vGap = circleSize / 2;
 
-        const usedWidth = 11 * (circleSize + hGap) * 2;
-        const usedHeight = 10 * (circleSize + vGap);
+        const usedWidth = windowWidth;
+        const usedHeight = windowHeight;
 
         const rowXPos = (windowWidth / 2) - (usedWidth / 2);
         const rowYPos = (windowHeight / 2) - (usedHeight / 2);
@@ -56,8 +56,8 @@ class Start {
         $('html').css('background-color', colors["outer"]);
 
         for (let row = 0; row < 10; row++) {
-            this.paper.rect(usedWidth, 1).move(rowXPos, -1 + circleSize / 2 + rowYPos + (vGap / 2) + (row * (circleSize + vGap))).fill(colors["colorStange"]);
-            new CircleRow(this.paper, rowXPos + (hGap), rowYPos + (vGap / 2) + (row * (circleSize + vGap)), circleSize, hGap, vGap, usedWidth, usedHeight, colors);
+            this.paper.rect(usedWidth, 1).move(rowXPos, -1 + circleSize / 2 + rowYPos + (1.5*vGap / 1) + (row * (circleSize + vGap))).fill(colors["colorStange"]);
+            new CircleRow(this.paper, rowXPos + (hGap), rowYPos + (1.5 * vGap / 1) + (row * (circleSize + vGap)), circleSize, hGap, vGap, usedWidth, usedHeight, colors);
         }
     }
 }
